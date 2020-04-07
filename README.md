@@ -16,6 +16,7 @@ yarn install
 
 ## Usage
 
+First of all ```cp .env.example .env```, and add your credentials for the database
 ```sh
 yarn start
 ```
