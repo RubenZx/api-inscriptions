@@ -1,23 +1,36 @@
-import mongoose, { Schema } from "mongoose";
+import { getModelForClass, prop } from "@typegoose/typegoose";
 
-interface InscriptionType {
-  firstname: string;
-  lastname: string;
-  age: number;
-  email: string;
-  ticket: boolean;
-  start: Date;
-  end: Date;
+class Inscription {
+  @prop({ required: true })
+  public firstname!: string;
+
+  @prop({ required: true })
+  public lastname!: string;
+
+  @prop()
+  public age: number | undefined;
+
+  @prop({
+    required: true,
+    unique: true,
+    validate: {
+      validator: (email) =>
+        /^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/.test(
+          email
+        ),
+      message: "Invalid email",
+    },
+  })
+  public email!: string;
+
+  @prop({ required: true })
+  public ticket!: boolean;
+
+  @prop({ required: true })
+  public start!: Date;
+
+  @prop({ required: true })
+  public end!: Date;
 }
 
-const InscriptionSchema = new Schema<InscriptionType>({
-  firstname: { type: String, required: true },
-  lastname: { type: String, required: true },
-  age: Number,
-  email: { type: String, required: true, unique: true },
-  ticket: { type: Boolean, required: true },
-  start: { type: Date, required: true },
-  end: { type: Date, required: true },
-});
-
-export default mongoose.model("Inscription", InscriptionSchema);
+export default getModelForClass(Inscription);
