@@ -1,13 +1,25 @@
 import { getModelForClass, prop } from "@typegoose/typegoose";
 
 class Inscription {
-  @prop({ required: true })
+  @prop({
+    required: true,
+    trim: true,
+    minlength: 4,
+  })
   public firstname!: string;
 
-  @prop({ required: true })
+  @prop({
+    required: true,
+    trim: true,
+    minlength: 4,
+  })
   public lastname!: string;
 
-  @prop({ required: true })
+  @prop({
+    required: true,
+    min: 18,
+    max: 99,
+  })
   public age!: number;
 
   @prop({
@@ -29,7 +41,14 @@ class Inscription {
   @prop({ required: true })
   public start!: Date;
 
-  @prop({ required: true })
+  @prop({
+    required: true,
+    validate: {
+      validator: function (this: Inscription, endDate) {
+        return this.start <= endDate;
+      },
+    },
+  })
   public end!: Date;
 }
 

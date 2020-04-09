@@ -13,12 +13,17 @@ router.get("/", async (req, res) => {
 });
 
 router.post("/", async (req, res) => {
-  try {
-    const newInscription = new inscriptionModel(req.body);
-    await newInscription.save();
-    res.status(201).send({ msg: "Inscription created correctly." });
-  } catch (e) {
-    res.status(500).send({ msg: e.errmsg });
+  const newInscription = new inscriptionModel(req.body);
+  const error = newInscription.validateSync();
+  if (error) {
+    res.status(400).send(error);
+  } else {
+    try {
+      await newInscription.save();
+      res.status(201).send({ msg: "Inscription created correctly." });
+    } catch (e) {
+      res.status(500).send({ msg: e.errmsg });
+    }
   }
 });
 
@@ -41,14 +46,16 @@ router.get("/:_id", async (req, res) => {
 });
 
 router.put("/:_id", async (req, res) => {
-  try {
-    const inscriptionUpdated = await inscriptionModel.findByIdAndUpdate(
-      req.params._id,
-      req.body
-    );
-    res.status(201).send(inscriptionUpdated);
-  } catch (e) {
-    res.status(500).send({ msg: e.errmsg });
+  const error = new inscriptionModel(req.body).validateSync();
+  if (error) {
+    res.status(400).send(error);
+  } else {
+    try {
+      await inscriptionModel.findByIdAndUpdate(req.params._id, req.body);
+      res.status(201).send({ msg: "Inscription updated correctly" });
+    } catch (e) {
+      res.status(500).send({ msg: e.errmsg });
+    }
   }
 });
 
