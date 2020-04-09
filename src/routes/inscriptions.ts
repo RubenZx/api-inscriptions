@@ -6,7 +6,7 @@ const router = express.Router();
 router.get("/", async (req, res) => {
   try {
     const inscriptions = await inscriptionModel.find();
-    res.status(201).send(inscriptions);
+    res.status(200).send(inscriptions);
   } catch (e) {
     res.status(500).send({ msg: e.errmsg });
   }
@@ -39,7 +39,13 @@ router.delete("/", async (req, res) => {
 router.get("/:_id", async (req, res) => {
   try {
     const inscription = await inscriptionModel.findById(req.params._id);
-    res.status(201).send(inscription);
+    if (!inscription) {
+      res.status(400).send({
+        msg: "Inscription with id: " + req.params._id + " doesn't exit.",
+      });
+    } else {
+      res.status(200).send(inscription);
+    }
   } catch (e) {
     res.status(500).send({ msg: e.errmsg });
   }
@@ -51,8 +57,17 @@ router.put("/:_id", async (req, res) => {
     res.status(400).send(error);
   } else {
     try {
-      await inscriptionModel.findByIdAndUpdate(req.params._id, req.body);
-      res.status(201).send({ msg: "Inscription updated correctly" });
+      const inscriptionToUpdate = await inscriptionModel.findByIdAndUpdate(
+        req.params._id,
+        req.body
+      );
+      if (!inscriptionToUpdate) {
+        res.status(400).send({
+          msg: "Inscription with id: " + req.params._id + " doesn't exit.",
+        });
+      } else {
+        res.status(200).send({ msg: "Inscription updated correctly." });
+      }
     } catch (e) {
       res.status(500).send({ msg: e.errmsg });
     }
@@ -61,8 +76,16 @@ router.put("/:_id", async (req, res) => {
 
 router.delete("/:_id", async (req, res) => {
   try {
-    await inscriptionModel.findByIdAndDelete(req.params._id);
-    res.status(201).send({ msg: "Inscription removed correctly." });
+    const inscriptionToDelete = await inscriptionModel.findByIdAndDelete(
+      req.params._id
+    );
+    if (!inscriptionToDelete) {
+      res.status(400).send({
+        msg: "Inscription with id: " + req.params._id + " doesn't exit.",
+      });
+    } else {
+      res.status(200).send({ msg: "Inscription removed correctly." });
+    }
   } catch (e) {
     res.status(500).send({ msg: e.errmsg });
   }
