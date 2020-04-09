@@ -1,6 +1,6 @@
 import { getModelForClass, prop } from "@typegoose/typegoose";
 
-class Inscription {
+export class Inscription {
   @prop({
     required: true,
     trim: true,

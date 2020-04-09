@@ -1,5 +1,17 @@
+import { DocumentType } from "@typegoose/typegoose";
 import express from "express";
-import inscriptionModel from "../models/Inscription";
+import inscriptionModel, { Inscription } from "../models/Inscription";
+
+const checkId = (inscription: DocumentType<Inscription> | null, id: string) =>
+  inscription
+    ? {
+        status: 200,
+        response: inscription,
+      }
+    : {
+        status: 400,
+        response: { msg: `Inscription with id: ${id} doesn't exit.` },
+      };
 
 const router = express.Router();
 
@@ -39,13 +51,8 @@ router.delete("/", async (req, res) => {
 router.get("/:_id", async (req, res) => {
   try {
     const inscription = await inscriptionModel.findById(req.params._id);
-    if (!inscription) {
-      res.status(400).send({
-        msg: "Inscription with id: " + req.params._id + " doesn't exit.",
-      });
-    } else {
-      res.status(200).send(inscription);
-    }
+    const { status, response } = checkId(inscription, req.params._id);
+    res.status(status).send(response);
   } catch (e) {
     res.status(500).send({ msg: e.errmsg });
   }
@@ -61,13 +68,12 @@ router.put("/:_id", async (req, res) => {
         req.params._id,
         req.body
       );
-      if (!inscriptionToUpdate) {
-        res.status(400).send({
-          msg: "Inscription with id: " + req.params._id + " doesn't exit.",
-        });
-      } else {
-        res.status(200).send({ msg: "Inscription updated correctly." });
-      }
+      const { status, response } = checkId(inscriptionToUpdate, req.params._id);
+      res
+        .status(status)
+        .send(
+          status === 400 ? response : { msg: "Inscription updated correctly." }
+        );
     } catch (e) {
       res.status(500).send({ msg: e.errmsg });
     }
@@ -79,13 +85,12 @@ router.delete("/:_id", async (req, res) => {
     const inscriptionToDelete = await inscriptionModel.findByIdAndDelete(
       req.params._id
     );
-    if (!inscriptionToDelete) {
-      res.status(400).send({
-        msg: "Inscription with id: " + req.params._id + " doesn't exit.",
-      });
-    } else {
-      res.status(200).send({ msg: "Inscription removed correctly." });
-    }
+    const { status, response } = checkId(inscriptionToDelete, req.params._id);
+    res
+      .status(status)
+      .send(
+        status === 400 ? response : { msg: "Inscription updated correctly." }
+      );
   } catch (e) {
     res.status(500).send({ msg: e.errmsg });
   }
