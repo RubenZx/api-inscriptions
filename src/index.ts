@@ -34,7 +34,7 @@ app.use(
 app.use("/inscriptions", inscriptions);
 
 app.get("/", (req, res) => {
-  res.send("Hello World!");
+  res.send("API-inscriptions");
 });
 
 let db = mongoose.connection;

@@ -7,8 +7,8 @@ class Inscription {
   @prop({ required: true })
   public lastname!: string;
 
-  @prop()
-  public age: number | undefined;
+  @prop({ required: true })
+  public age!: number;
 
   @prop({
     required: true,

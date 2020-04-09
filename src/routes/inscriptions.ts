@@ -24,7 +24,7 @@ router.post("/", async (req, res) => {
 
 router.delete("/", async (req, res) => {
   try {
-    await inscriptionModel.remove({});
+    await inscriptionModel.deleteMany({});
     res.status(200).send({ msg: "Inscriptions deleted correctly." });
   } catch (e) {
     res.status(500).send({ msg: e.errmsg });
